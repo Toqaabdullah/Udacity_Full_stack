@@ -14,6 +14,7 @@ import sys
 from logging import Formatter, FileHandler
 from flask_wtf import FlaskForm as Form
 from forms import *
+from models import *
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
@@ -21,7 +22,8 @@ from forms import *
 app = Flask(__name__)
 moment = Moment(app)
 app.config.from_object('config')
-db = SQLAlchemy(app)
+db.init_app(app)
+#db = SQLAlchemy(app)
 
 # TODO: connect to a local postgresql database DONE
 migrate = Migrate(app, db)
@@ -29,65 +31,6 @@ migrate = Migrate(app, db)
 # Models.
 #----------------------------------------------------------------------------#
 
-class Venue(db.Model):
-    __tablename__ = 'venues'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
-    address = db.Column(db.String(120))
-    phone = db.Column(db.String(120))
-    genres = db.Column(db.ARRAY(db.String()))
-    image_link = db.Column(db.String(500))
-    facebook_link = db.Column(db.String(120))
-    website_link= db.Column(db.String(120))
-    seeking_talent= db.Column(db.Boolean)
-    seeking_description=db.Column(db.String(500))
-    shows = db.relationship('Show', backref="venue", lazy=True)
-
-    @property
-    def search(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-        }
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate DONE
-
-class Artist(db.Model):
-    __tablename__ = 'artists'
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
-    city = db.Column(db.String(120))
-    state = db.Column(db.String(120))
-    phone = db.Column(db.String(120))
-    genres = db.Column(db.ARRAY(db.String()))
-    image_link = db.Column(db.String(500))
-    facebook_link = db.Column(db.String(120))
-    website_link= db.Column(db.String(120))
-    seeking_venue= db.Column(db.Boolean)
-    seeking_description=db.Column(db.String(500))
-    shows = db.relationship('Show', backref="artist", lazy=True)    
-    
-    @property
-    def search(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-        }
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate DONE
-
-# TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
-
-class Show(db.Model):
-  __tablename__='shows'
-
-  id= db.Column(db.Integer, primary_key=True)
-  artist_id= db.Column(db.Integer, db.ForeignKey('artists.id') ,nullable=False)
-  venue_id= db.Column(db.Integer,db.ForeignKey('venues.id'), nullable=False)
-  start_time= db.Column(db.DateTime, nullable=False)
-  venue_deletion = db.relationship('Venue', backref=db.backref('shows_venue', cascade='all, delete'))
 
 
 #----------------------------------------------------------------------------#
@@ -524,7 +467,7 @@ def create_show_submission():
     db.session.close()
   # DONE : on unsuccessful db insert, flash an error instead.
 
-    flash('Show was successfully listed!')
+  
 
   # e.g., flash('An error occurred. Show could not be listed.')
   # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
