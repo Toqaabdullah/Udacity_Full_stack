@@ -46,6 +46,12 @@ class Venue(db.Model):
     seeking_description=db.Column(db.String(500))
     shows = db.relationship('Show', backref="venue", lazy=True)
 
+    @property
+    def search(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+        }
     # TODO: implement any missing fields, as a database migration using Flask-Migrate DONE
 
 class Artist(db.Model):
@@ -111,6 +117,7 @@ def index():
 
 @app.route('/venues')
 def venues():
+
   # TODO: replace with real venues data.
   #       num_upcoming_shows should be aggregated based on number of upcoming shows per venue.
 
@@ -118,17 +125,23 @@ def venues():
   data=[]
   for region in regions:
 
+    tmp_venues=[]
+    venues= Venue.query.filter_by(state=region.state).filter_by(city=region.city).all()
+    for venue in venues:
+      tmp_venues.append({
+        "id": venue.id,
+        "name": venue.name,
+        "num_upcoming_shows": len(db.session.query(Show).filter(Show.start_time>datetime.now()).all())
+
+      })
+
     data.append({
       "city": region.city,
       "state": region.state,
-      "venues": [{
-        "id": region.id,
-        "name": region.name,
-        "num_upcoming_shows": len([show for show in Venue.shows if Show.start_time > datetime.now()])
-        
-        }]
+      "venues": tmp_venues
  
     })
+
 
        
 
@@ -140,14 +153,16 @@ def search_venues():
   # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
   # seach for Hop should return "The Musical Hop".
   # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
-  response={
-    "count": 1,
-    "data": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
-  }
+  search=request.form.get('search_term', '')
+  venues=Venue.query.filter(Venue.name.ilike("%"+ search + "%")).all()
+  data=[]
+  for venue in venues:
+    data.append(venue.search)
+    response={ 
+      "count": len(venues),
+      "data": data
+    }
+ 
   return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
 
 @app.route('/venues/<int:venue_id>')
@@ -264,7 +279,7 @@ def artists():
 
 @app.route('/artists/search', methods=['POST'])
 def search_artists():
-  # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
+  # DONE: implement search on artists with partial string search. Ensure it is case-insensitive.
   # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
   # search for "band" should return "The Wild Sax Band".
   search=request.form.get('search_term', '')
@@ -283,7 +298,7 @@ def search_artists():
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
   # shows the artist page with the given artist_id
-  # TODO: replace with real artist data from the artist table, using artist_id
+  # DONE: replace with real artist data from the artist table, using artist_id
   upcoming=db.session.query(Show).join(Artist).filter(Show.artist_id==artist_id).filter(Show.start_time>=datetime.now()).all()
   upcoming_shows=[]
   for event in upcoming:
