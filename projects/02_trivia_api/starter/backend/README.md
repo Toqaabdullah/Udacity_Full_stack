@@ -49,16 +49,16 @@ These are the files you'd want to edit in the backend:
 
 One note before you delve into your tasks: for each endpoint, you are expected to define the endpoint and response data. The frontend will be a plentiful resource because it is set up to expect certain endpoints and response data formats already. You should feel free to specify endpoints in your own way; if you do so, make sure to update the frontend or you will get some unexpected behavior. 
 
-1. Use Flask-CORS to enable cross-domain requests and set response headers. 
+1. Use Flask-CORS to enable cross-domain requests and set response headers. #DONE
 
 
-2. Create an endpoint to handle GET requests for questions, including pagination (every 10 questions). This endpoint should return a list of questions, number of total questions, current category, categories. 
+2. Create an endpoint to handle GET requests for questions, including pagination (every 10 questions). This endpoint should return a list of questions, number of total questions, current category, categories. #DONE
 
 
-3. Create an endpoint to handle GET requests for all available categories. 
+3. Create an endpoint to handle GET requests for all available categories. #DONE
 
 
-4. Create an endpoint to DELETE question using a question ID. 
+4. Create an endpoint to DELETE question using a question ID. #DONE
 
 
 5. Create an endpoint to POST a new question, which will require the question and answer text, category, and difficulty score. 

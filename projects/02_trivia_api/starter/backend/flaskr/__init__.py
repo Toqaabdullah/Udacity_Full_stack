@@ -8,25 +8,88 @@ from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
 
+
+
 def create_app(test_config=None):
   # create and configure the app
   app = Flask(__name__)
   setup_db(app)
   
   '''
-  @TODO: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
+  @DONE: Set up CORS. Allow '*' for origins. Delete the sample route after completing the TODOs
   '''
+  CORS(app, resources={r"*" : {"origins": '*'}})
+
 
   '''
-  @TODO: Use the after_request decorator to set Access-Control-Allow
+  @DONE: Use the after_request decorator to set Access-Control-Allow
   '''
+  @app.after_request
+  def after_request(response):
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization')  
+    response.headers.add('Access-Control-Allow-Headers', 'GET, POST, PATCH, DELETE, OPTION')
+    return response
 
   '''
   @TODO: 
   Create an endpoint to handle GET requests 
   for all available categories.
   '''
+  @app.route('/questions',methods=['GET'])
+  def retrieve_questions():
 
+    #Ten records pagination
+    page=request.args.get('page',1,type=int)
+    start=(page-1)*QUESTIONS_PER_PAGE
+    end=start+QUESTIONS_PER_PAGE
+
+    #To get questions
+    questions=Question.query.order_by(Question.id).all()
+    formatted_questions=[question.format() for question in questions]
+
+    #To identify Categories according to ID
+    categories=Category.query.all()
+    formatted_catogories={}
+    for category in categories:
+      formatted_catogories[category.id]=category.type
+
+    #error 404 in case of getting page out of range
+    if (len(formatted_questions[start:end])==0):
+      abort(404)
+
+    #Return all requirements
+    return jsonify({'success':True,'questions':formatted_questions[start:end] ,'total_questions': len(questions),'catogories':formatted_catogories})
+
+  @app.route('/categories',methods=['GET'])
+  def retrieve_categories():
+    #get categories
+    categories=Category.query.all()
+    formatted_catogories=[category.format() for category in categories]
+    return jsonify({'sucess': True, 'categories':formatted_catogories})
+
+  @app.route('/questions/<int:id>',methods=['DELETE'])
+  def delete_questions(id):
+    try:
+      question=Question.query.filter(Question.id==id).one_or_none()
+
+      if question is None:
+        abort(404)
+
+      question.delete()
+      questions=Question.query.all()
+      return jsonify({'success':True,'deleted':id,'total_questions':len(questions)})
+
+    except:
+      abort(422)
+  
+    
+  @app.route('/home')
+  def home():
+    return jsonify({'success': True}), 200
+    
+  
+
+    
 
   '''
   @TODO: 
@@ -98,7 +161,20 @@ def create_app(test_config=None):
   Create error handlers for all expected errors 
   including 404 and 422. 
   '''
+  @app.errorhandler(404)
+
+  def bad_request(error):
+
+    return jsonify({
+
+      "success": False, 
+
+      "error": 404,
+      "message": "tawad"
+
+      }), 404
   
+
   return app
 
     
