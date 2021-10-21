@@ -69,18 +69,42 @@ def create_app(test_config=None):
 
   @app.route('/questions/<int:id>',methods=['DELETE'])
   def delete_questions(id):
+    #filter the question which should be deleted
     try:
       question=Question.query.filter(Question.id==id).one_or_none()
 
       if question is None:
         abort(404)
-
+     
+     #delete the question and display the total questions after deletion
       question.delete()
       questions=Question.query.all()
       return jsonify({'success':True,'deleted':id,'total_questions':len(questions)})
 
     except:
       abort(422)
+
+    @app.route('/questions',methods=['POST'])
+    def post_question():
+      #get the body from the request
+      body=request.get_json()
+      
+      #assign the new records
+      new_question=body.get('question',None)
+      new_answer=body.get('answer',None)
+      new_category=body.get('category',None)
+      new_difficulty=body.get('difficulty',None)
+
+      #insert the new question and display its ID & total questions
+      try:
+        question=Question(question=new_question,answer=new_answer,category=new_category,difficulty=new_difficulty)
+        question.insert()
+        
+        questions=Question.query.all()
+        return jsonify({'sucess':True,'created':question.id,'total_questions':len(questions)})
+
+      except:
+        abort(422)
   
     
   @app.route('/home')
