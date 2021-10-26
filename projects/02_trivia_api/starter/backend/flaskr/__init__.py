@@ -66,7 +66,9 @@ def create_app(test_config=None):
   def retrieve_categories():
     #get categories
     categories=Category.query.all()
-    formatted_catogories=[category.format() for category in categories]
+    formatted_catogories={}
+    for category in categories:
+      formatted_catogories[category.id]=category.type
     return jsonify({'success': True, 'categories':formatted_catogories})
 
   @app.route('/questions/<int:id>',methods=['DELETE'])
