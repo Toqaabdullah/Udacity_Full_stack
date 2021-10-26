@@ -67,7 +67,7 @@ def create_app(test_config=None):
     #get categories
     categories=Category.query.all()
     formatted_catogories=[category.format() for category in categories]
-    return jsonify({'sucess': True, 'categories':formatted_catogories})
+    return jsonify({'success': True, 'categories':formatted_catogories})
 
   @app.route('/questions/<int:id>',methods=['DELETE'])
   def delete_questions(id):
@@ -103,7 +103,7 @@ def create_app(test_config=None):
       question.insert()
         
       questions=Question.query.all()
-      return jsonify({'sucess':True,'created':question.id,'total_questions':len(questions)})
+      return jsonify({'success':True,'created':question.id,'total_questions':len(questions)})
 
     except:
       abort(422)
