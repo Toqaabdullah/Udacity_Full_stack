@@ -60,7 +60,7 @@ def create_app(test_config=None):
       abort(404)
 
     #Return all requirements
-    return jsonify({'success':True,'questions':formatted_questions[start:end] ,'total_questions': len(questions),'catogories':formatted_catogories})
+    return jsonify({'success':True,'questions':formatted_questions[start:end] ,'total_questions': len(questions),'categories':formatted_catogories})
 
   @app.route('/categories',methods=['GET'])
   def retrieve_categories():
@@ -110,7 +110,7 @@ def create_app(test_config=None):
     except:
       abort(422)
   
-  @app.route('/categories/<int:id>/questions',methods=['GET','POST'])
+  @app.route('/categories/<int:id>/questions',methods=['GET'])
   def post_question_by_category(id):
    
     #filter category according to endpoint
