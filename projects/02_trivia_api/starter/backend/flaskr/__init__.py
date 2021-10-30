@@ -162,8 +162,8 @@ def create_app(test_config=None):
     try:
       
       # get random question according to the given category if exists
-      if(category):
-        questions=Question.query.filter_by(category=category).all()
+      if(category['id']):
+        questions=Question.query.filter_by(category=category['id']).all()
 
       else:
         questions=Question.query.all()
