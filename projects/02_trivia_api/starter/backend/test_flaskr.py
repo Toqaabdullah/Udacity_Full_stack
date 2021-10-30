@@ -85,7 +85,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['deleted'])
         self.assertTrue(data['total_questions'])
 
-    def invalid_deletion_404(self):
+    def test_invalid_deletion_404(self):
 
         response = self.client().delete('/questions/1000')
         data=json.loads(response.data)
@@ -110,7 +110,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'],True)
         self.assertTrue(data['total_questions'])
 
-    def post_question_422(self):
+    def test_post_question_422(self):
 
         question={
             'question':'what is the new question?',
@@ -132,7 +132,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['questions'])
         self.assertTrue(data['total_questions'])
 
-    def post_question_by_category_404 (self):
+    def test_post_question_by_category_404 (self):
         response = self.client().get('/categories/50/questions')
         data = json.loads(response.data)
         self.assertEqual(response.status_code, 404)
@@ -149,7 +149,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['questions'])
         self.assertTrue(data['total_questions'])
 
-    def search_question_bad_request(self):
+    def test_search_question_bad_request(self):
 
         keyword={'keyword'}
         response = self.client().post('/questions/search', json=keyword)
@@ -167,7 +167,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data["success"], True)
         self.assertTrue(data['question'])
 
-    def quiz_fails_500(self):
+    def test_quiz_fails_500(self):
 
         response = self.client().post('/questions/search')
         data = json.loads(response.data)
