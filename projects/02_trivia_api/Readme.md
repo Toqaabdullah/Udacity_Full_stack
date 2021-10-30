@@ -24,9 +24,11 @@ psql trivia < trivia.psql
 
 # Backend command
 
-set FLASK_APP=flaskr
-set FLASK_ENV=development
-python -m flask run
+- set FLASK_APP=flaskr
+
+- set FLASK_ENV=development
+
+- python -m flask run
 
 # Backend URL
 
