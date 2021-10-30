@@ -46,7 +46,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'],True)
         self.assertTrue(data['questions'])
         self.assertTrue(data['total_questions'])
-        self.assertTrue(data['catogories'])
+        self.assertTrue(data['categories'])
 
     def test_404_sent_requesting_beyond_valid_page(self):
 
@@ -73,19 +73,10 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['success'],False)
         self.assertEqual(data['message'],'Not Found')
 
-    # def test_delete_questions(self):
-
-
-    #     response = self.client().delete('/questions/24')
-    #     data=json.loads(response.data)
-
-    #     self.assertEqual(response.status_code,200)
-    #     self.assertEqual(data['success'],True)
-    #     self.assertTrue(data['deleted'])
-    #     self.assertTrue(data['total_questions'])
   
 
     def test_delete_questions(self):
+        
 
         response = self.client().delete('/questions/2')
         data=json.loads(response.data)
@@ -134,7 +125,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(data['message'],'Unprocessable')
 
     def test_post_question_by_category(self):
-        response = self.client().post('/categories/1/questions')
+        response = self.client().get('/categories/1/questions')
         data = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data["success"], True)
@@ -142,7 +133,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['total_questions'])
 
     def post_question_by_category_404 (self):
-        response = self.client().post('/categories/50/questions')
+        response = self.client().get('/categories/50/questions')
         data = json.loads(response.data)
         self.assertEqual(response.status_code, 404)
         self.assertEqual(data['success'],False)
