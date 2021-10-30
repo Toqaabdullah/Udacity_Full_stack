@@ -18,9 +18,9 @@ pip install -r requirements.txt
 
 # Create database
 
-dropdb trivia
-createdb trivia
-psql trivia < trivia.psql
+- dropdb trivia
+- createdb trivia
+- psql trivia < trivia.psql
 
 # Backend command
 
