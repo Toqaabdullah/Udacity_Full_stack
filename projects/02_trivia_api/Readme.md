@@ -299,7 +299,7 @@ The Erros found in this project are:
 ## POST /questions/quiz
 
 - General : Play a quiz game by displaying random questions without displaying the previuos question and belongs to the given category if found.
-- Sample: `curl http://127.0.0.1:5000/quizzes -X POST -H "Content-Type: application/json" -d '{"previous_questions": [12], "quiz_category": {"type": "History", "id": "4"}}'`<br>
+- Sample: `curl http://127.0.0.1:5000/quizzes -X POST -H "Content-Type: application/json" -d '{"previous_question": [12], "category": {"type": "History", "id": "4"}}'`<br>
 
 ```json
 {
