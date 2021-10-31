@@ -249,7 +249,7 @@ The Erros found in this project are:
 
 ## POST /questions/search
 
-- General : search for  questions according to the entered keyword.
+- General : search for questions according to the entered keyword.
 - Sample: `curl http://127.0.0.1:5000/questions/search -X POST -H "Content-Type: application/json" -d '{"keyword": "who"}'`<br>
 
 ```json
