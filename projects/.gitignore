@@ -1,6 +1,7 @@
 .vscode
 __pycache__
 venv
+02_trivia_api\starter\frontend\node_modules
 
 # OS generated files #
 ######################
