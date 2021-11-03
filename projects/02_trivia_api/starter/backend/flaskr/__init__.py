@@ -167,21 +167,31 @@ def create_app(test_config=None):
 
       else:
         questions=Question.query.all()
-
+      
+      questions_count=len(questions)
       random_question= questions[random.randrange(0,len(questions),1)]
 
       # if it is similar to the previous question, get another random question
       flag=True
+      counter=0
       while flag:
+
 
         if str(random_question.id) in previous_question:
           random_question= questions[random.randrange(0,len(questions),1)]
+          counter+=1
     
         else:
           flag=False
+          counter+=1
+      
+      if(questions_count==counter):
+        return jsonify({'success':True,'question': None})
+      else:
+        return jsonify({'success':True,'question': random_question.format()})
+          
 
-      return jsonify({'success':True,'question': random_question.format()})
-
+      
     except:
       print(sys.exc_info())
       abort(422)
