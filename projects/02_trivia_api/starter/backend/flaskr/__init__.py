@@ -188,8 +188,8 @@ def create_app(test_config=None):
     
         else:
           flag=False
-      else:
-        return jsonify({'success':True,'question': random_question.format()})
+      
+      return jsonify({'success':True,'question': random_question.format()})
           
 
       
