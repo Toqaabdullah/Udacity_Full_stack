@@ -76,7 +76,6 @@ class TriviaTestCase(unittest.TestCase):
   
 
     def test_delete_questions(self):
-        
 
         response = self.client().delete('/questions/2')
         data=json.loads(response.data)
@@ -87,7 +86,7 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_invalid_deletion_404(self):
 
-        response = self.client().delete('/questions/1000')
+        response = self.client().delete('/questions/')
         data=json.loads(response.data)
 
         self.assertEqual(response.status_code,404)
@@ -132,12 +131,12 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['questions'])
         self.assertTrue(data['total_questions'])
 
-    def test_post_question_by_category_404 (self):
-        response = self.client().get('/categories/50/questions')
+    def test_post_question_by_category_405 (self):
+        response = self.client().post('/categories/1/questions')
         data = json.loads(response.data)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 405)
         self.assertEqual(data['success'],False)
-        self.assertEqual(data['message'],'Not Found')
+        self.assertEqual(data['message'],'Method Not allowed')
 
     def test_question_search(self):
 
@@ -160,7 +159,7 @@ class TriviaTestCase(unittest.TestCase):
 
     def test_quiz(self):
 
-        previous_question={ 'previous_question':'5'}
+        previous_question={ 'previous_question':[5],"category": {"type": "History", "id": "4"}}
         response = self.client().post('/questions/quiz', json=previous_question)
         data = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
