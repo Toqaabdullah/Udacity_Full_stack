@@ -37,7 +37,8 @@ def home():
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks',methods=['GET'])
-def get_drinks():
+@requires_auth ('get:drinks')
+def get_drinks(payload):
     drinks=Drink.query.all()
     return jsonify( {"success": True, "drinks": [drink.short() for drink in drinks]}),200
 
@@ -50,7 +51,8 @@ def get_drinks():
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks-detail',methods=['GET'])
-def get_drinks_detail():
+@requires_auth('get:drinks-detail')
+def get_drinks_detail(payload):
     drinks_detail=Drink.query.all()
     return jsonify( {"success": True, "drinks": [drink.long() for drink in drinks_detail]}),200
 
@@ -64,7 +66,8 @@ def get_drinks_detail():
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks',methods=['POST'])
-def post_drinks():
+@requires_auth('post:drinks')
+def post_drinks(payload):
     body=request.get_json()
     new_title=body.get('title',None)
     new_recipe=body.get('recipe',None)
@@ -94,7 +97,8 @@ def post_drinks():
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks/<int:id>', methods=['PATCH'])
-def patch_drinks(id):
+@requires_auth('patch:drinks')
+def patch_drinks(id,payload):
     body=request.get_json()
         
     try:
@@ -133,7 +137,8 @@ def patch_drinks(id):
         or appropriate status code indicating reason for failure
 '''
 @app.route('/drinks/<int:id>', methods=['DELETE'])
-def delete_drinks(id):
+@requires_auth('delete:drinks')
+def delete_drinks(id,payload):
 
     try:
 
