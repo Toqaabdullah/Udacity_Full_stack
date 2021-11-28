@@ -179,6 +179,14 @@ def unprocessable(error):
 
 '''
 
+@app.errorhandler(AuthError)
+def server_error(error):
+    return jsonify({
+        "success": False,
+        "error": error.code,
+        "message": error.description
+    }), error.status_code
+
 '''
 @TODO implement error handler for 404
     error handler should conform to general task above
