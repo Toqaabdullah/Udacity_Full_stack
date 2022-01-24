@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_migrate import Migrate 
 from models import setup_db, Actor,Movie
+import sys
 
 def create_app(test_config=None):
   # create and configure the app
@@ -72,6 +73,112 @@ def create_app(test_config=None):
     except:
 
       print(sys.exc_info())
+      abort(422)
+
+  @app.route('/movies/<int:id>', methods=['PATCH'])
+  def patch_movies(id):
+
+    body=request.get_json()
+        
+    try:
+
+      
+      movie=Movie.query.filter_by(id=id).one_or_none()
+    
+      if movie is None:
+        print(sys.exc_info())
+
+        abort(404)
+
+      new_title=body.get('title',None)
+      new_release_date=body.get('release_date',None)
+
+      if new_title:
+
+        movie.title = new_title
+
+      if new_release_date:
+
+        movie.release_date = new_release_date
+
+      movie.update()
+      return jsonify({'success':True,'movie': [movie.short()]}),200
+
+    except:
+      print(sys.exc_info())
+
+      abort(422)
+
+  @app.route('/actors/<int:id>', methods=['PATCH'])
+  def patch_actors(id):
+
+    body=request.get_json()
+        
+    try:
+      actor=Actor.query.filter_by(id=id).one_or_none()
+    
+      if actor is None:
+        print(sys.exc_info())
+
+        abort(404)
+
+      new_name=body.get('name',None)
+      new_age=body.get('age',None)
+      new_gender=body.get('gender',None)
+      new_movies_id= body.get('movies_id',None)
+
+      if new_name:
+
+        actor.name = new_name
+
+      if new_age:
+        actor.age = new_age
+
+      if new_gender:
+        actor.gender = new_gender
+
+      if new_movies_id:
+        actor.movies_id = new_movies_id
+
+      actor.update()
+      return jsonify({'success':True,'actors': [actor.short()]}),200
+
+    except:
+      print(sys.exc_info())
+
+      abort(422)
+
+
+  @app.route('/movies/<int:id>', methods=['DELETE'])
+  def delete_drinks(id):
+    try:
+
+
+      movie=Movie.query.filter_by(id=id).one_or_none()
+    
+      if movie is None:
+        abort(404)
+
+      movie.delete()
+      return jsonify({"success": True, "delete": id}),200
+
+    except:
+      abort(422)
+
+  @app.route('/actors/<int:id>', methods=['DELETE'])
+  def delete_actors(id):
+    try:
+
+
+      actor=Actor.query.filter_by(id=id).one_or_none()
+    
+      if actor is None:
+        abort(404)
+
+      actor.delete()
+      return jsonify({"success": True, "delete": id}),200
+
+    except:
       abort(422)
 
   return app
