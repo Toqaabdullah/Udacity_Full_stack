@@ -4,7 +4,7 @@ import unittest
 import json
 import os
 from flask_sqlalchemy import SQLAlchemy
-from flaskr import create_app
+#from flaskr import create_app
 from models import setup_db, Actor,Movie
 
 
@@ -14,7 +14,8 @@ class CapstoneProjectTestCase(unittest.TestCase):
 
         self.app = create_app()
         self.client = self.app.test_client
-        self.database_name = "Capstone_test_db"
+        #self.database_name = "Capstone_test_db"
+        self.database_name = "testDB"
         self.database_path = "postgres://{}/{}".format('localhost:5432', self.database_name)
         setup_db(self.app, self.database_path)
 
