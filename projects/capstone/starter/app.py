@@ -26,13 +26,13 @@ def create_app(test_config=None):
   def get_actors():
 
     actors=Actor.query.all()
-    return jsonify( {"success": True, "actors": [actor.short() for actor in actors]}),200
+    return jsonify( {"success": True, "actors": [actor.short() for actor in actors],'total_actors': len(actors)}),200
 
 
   @app.route('/movies',methods=['GET'])
   def get_movies():
     movies=Movie.query.all()
-    return jsonify( {"success": True, "movies": [movie.short() for movie in movies]}),200
+    return jsonify( {"success": True, "movies": [movie.short() for movie in movies],'total_movies': len(movies)}),200
 
   @app.route('/actors',methods=['POST'])
   def post_actors():
@@ -181,6 +181,80 @@ def create_app(test_config=None):
     except:
       abort(422)
 
+
+
+  
+  @app.errorhandler(404)
+
+  def not_found(error):
+    
+
+    return jsonify({
+
+      "success": False, 
+
+      "error": 404,
+      "message": "Not Found"
+
+      }), 404
+
+
+
+  @app.errorhandler(400)
+
+  def bad_request(error):
+    
+
+    return jsonify({
+
+      "success": False, 
+
+      "error": 400,
+      "message": "Bad Request"
+
+      }), 400
+
+  @app.errorhandler(422)
+
+  def unprcessable(error):
+    
+
+    return jsonify({
+
+      "success": False, 
+
+      "error": 422,
+      "message": "Unprocessable"
+
+      }), 422
+  
+  @app.errorhandler(500)
+
+  def server_error(error):
+    
+
+    return jsonify({
+
+      "success": False, 
+
+      "error": 500,
+      "message": "Internal Server Error"
+
+      }), 500
+
+  @app.errorhandler(405)
+
+  def server_error(error):
+    
+
+    return jsonify({
+
+      "success": False, 
+
+      "error": 405,
+      "message": "Method Not allowed"
+
+      }), 405
   return app
 
 APP = create_app()
