@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_migrate import Migrate 
 from models import setup_db, Actor,Movie
+from auth.auth import AuthError, requires_auth
 import sys
 
 def create_app(test_config=None):
@@ -23,7 +24,8 @@ def create_app(test_config=None):
 
 
   @app.route('/actors',methods=['GET'])
-  def get_actors():
+  @requires_auth('get:actors')
+  def get_actors(payload):
 
     actors=Actor.query.all()
     return jsonify( {"success": True, "actors": [actor.short() for actor in actors],'total_actors': len(actors)}),200
