@@ -6,6 +6,7 @@ from flask_migrate import Migrate
 from models import setup_db, Actor,Movie
 from auth.auth import AuthError, requires_auth
 import sys
+import traceback
 
 def create_app(test_config=None):
   # create and configure the app
@@ -26,9 +27,16 @@ def create_app(test_config=None):
   @app.route('/actors',methods=['GET'])
   @requires_auth('get:actors')
   def get_actors(payload):
+    try:
+      actors=Actor.query.all()
+      return jsonify( {"success": True, "actors": [actor.short() for actor in actors],'total_actors': len(actors)}),200
 
-    actors=Actor.query.all()
-    return jsonify( {"success": True, "actors": [actor.short() for actor in actors],'total_actors': len(actors)}),200
+    except Exception as e:
+      print('Error while doing something:', e)
+      traceback.print_exc()
+
+    
+    
 
 
   @app.route('/movies',methods=['GET'])

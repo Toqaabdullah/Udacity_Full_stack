@@ -3,6 +3,7 @@ from flask import request, _request_ctx_stack, abort
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
+import traceback
 
 
 AUTH0_DOMAIN = 'dev-c44vwyk3.auth0.com'
@@ -152,6 +153,7 @@ def requires_auth(permission=''):
               check_permissions(permission, payload)
             except AuthError as authError:
                 raise abort(authError.status_code,authError.error["description"])
+                traceback.print_exc()
             return f(payload, *args, **kwargs)
 
         return wrapper
