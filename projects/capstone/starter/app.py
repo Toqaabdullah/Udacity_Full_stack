@@ -40,12 +40,14 @@ def create_app(test_config=None):
 
 
   @app.route('/movies',methods=['GET'])
-  def get_movies():
+  @requires_auth('get:movies')
+  def get_movies(payload):
     movies=Movie.query.all()
     return jsonify( {"success": True, "movies": [movie.short() for movie in movies],'total_movies': len(movies)}),200
 
   @app.route('/actors',methods=['POST'])
-  def post_actors():
+  @requires_auth("post:actors")
+  def post_actors(payload):
     body=request.get_json()
     new_name=body.get('name',None)
     new_age=body.get('age',None)
@@ -66,7 +68,8 @@ def create_app(test_config=None):
       abort(422)
 
   @app.route('/movies',methods=['POST'])
-  def post_movies():
+  @requires_auth("post:movies")
+  def post_movies(payload):
     body=request.get_json()
     new_title=body.get('title',None)
     new_release_date=body.get('release_date',None)
@@ -86,7 +89,8 @@ def create_app(test_config=None):
       abort(422)
 
   @app.route('/movies/<int:id>', methods=['PATCH'])
-  def patch_movies(id):
+  @requires_auth('patch:movies')
+  def patch_movies(payload,id):
 
     body=request.get_json()
         
@@ -120,7 +124,8 @@ def create_app(test_config=None):
       abort(422)
 
   @app.route('/actors/<int:id>', methods=['PATCH'])
-  def patch_actors(id):
+  @requires_auth('patch:actors')
+  def patch_actors(payload,id):
 
     body=request.get_json()
         
@@ -160,7 +165,8 @@ def create_app(test_config=None):
 
 
   @app.route('/movies/<int:id>', methods=['DELETE'])
-  def delete_drinks(id):
+  @requires_auth("delete:movies")
+  def delete_drinks(payload,id):
     try:
 
 
@@ -176,7 +182,8 @@ def create_app(test_config=None):
       abort(422)
 
   @app.route('/actors/<int:id>', methods=['DELETE'])
-  def delete_actors(id):
+  @requires_auth("delete:actors")
+  def delete_actors(payload,id):
     try:
 
 

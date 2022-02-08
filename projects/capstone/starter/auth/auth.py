@@ -4,9 +4,11 @@ from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
 import traceback
+import urllib
 
 
-AUTH0_DOMAIN = 'dev-c44vwyk3.auth0.com'
+#AUTH0_DOMAIN = 'dev-c44vwyk3.auth0.com'
+AUTH0_DOMAIN = "dev-c44vwyk3.us.auth0.com"
 ALGORITHMS = ['RS256']
 API_AUDIENCE = 'http://127.0.0.1:5000/'
 
@@ -51,7 +53,9 @@ def get_token_auth_header():
 
 def check_permissions(permission, payload):
 
+
     if 'permissions' not in payload:
+    
         abort(400)
 
     if permission not in payload['permissions']:
@@ -77,8 +81,9 @@ def check_permissions(permission, payload):
 def verify_decode_jwt(token):
 
     #raise Exception('Not Implemented')
-    jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
-    jwks = json.loads(jsonurl.read())
+    jsonurl = "https://{}/.well-known/jwks.json".format(AUTH0_DOMAIN)
+    response = urllib.request.urlopen(jsonurl)
+    jwks = json.loads(response.read())
     unverified_header = jwt.get_unverified_header(token)
     rsa_key = {}
     if 'kid' not in unverified_header:
