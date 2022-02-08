@@ -12,6 +12,16 @@ class CapstoneProjectTestCase(unittest.TestCase):
 
     def setUp(self):
 
+        with open('roles.json', 'r') as f:
+            self.roles = json.loads(f.read())
+
+        assistant_jwt = self.roles["list_of_roles"]["assistant"]["token"]
+
+        director_jwt = self.roles["list_of_roles"]["director"]["token"]
+
+        producer_jwt = self.roles["list_of_roles"]["producer"]["token"]
+        self.authorization = {"assistant": f'Bearer {assistant_jwt}',"director": f'Bearer {director_jwt}',"producer": f'Bearer {producer_jwt}'}
+
         self.app = create_app()
         self.client = self.app.test_client
         #self.database_name = "Capstone_test_db"
@@ -34,7 +44,7 @@ class CapstoneProjectTestCase(unittest.TestCase):
     def test_get_movies(self):
 
   
-        response=self.client().get('/movies')
+        response=self.client().get('/movies', headers={'Authorization': self.authorization["assistant"]})
         #load the response data
         data= json.loads(response.data)
 
@@ -47,7 +57,7 @@ class CapstoneProjectTestCase(unittest.TestCase):
     def test_get_movies_405(self):
 
   
-        response=self.client().get('/movies/1')
+        response=self.client().get('/movies/1', headers={'Authorization': self.authorization["assistant"]})
         #load the response data
         data= json.loads(response.data)
 
@@ -60,7 +70,7 @@ class CapstoneProjectTestCase(unittest.TestCase):
     def test_get_actors(self):
 
   
-        response=self.client().get('/actors')
+        response=self.client().get('/actors', headers={'Authorization': self.authorization["assistant"]})
   
         data= json.loads(response.data)
 
@@ -73,7 +83,7 @@ class CapstoneProjectTestCase(unittest.TestCase):
     def test_get_actors_404(self):
 
   
-        response=self.client().get('/actor')
+        response=self.client().get('/actor', headers={'Authorization': self.authorization["assistant"]})
         
         data= json.loads(response.data)
 
@@ -81,10 +91,11 @@ class CapstoneProjectTestCase(unittest.TestCase):
         self.assertEqual(response.status_code,404)
         self.assertEqual(data['success'],False)
         self.assertEqual(data['message'],'Not Found')
-    
+
+ 
     def test_post_movies(self):
         movies={    "title": "Al Garima","release_date": "01/05/2022"}
-        response = self.client().post('/movies', json=movies)
+        response = self.client().post('/movies', json=movies, headers={'Authorization': self.authorization["producer"]})
         data = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'],True)
@@ -93,7 +104,7 @@ class CapstoneProjectTestCase(unittest.TestCase):
     def test_post_movies_422(self):
 
         movies={ "release_date": "01/05/2022"}
-        response = self.client().post('/movies', json=movies)
+        response = self.client().post('/movies', json=movies, headers={'Authorization': self.authorization["producer"]})
         data = json.loads(response.data)
         self.assertEqual(response.status_code, 422)
         self.assertEqual(data['success'],False)
@@ -101,7 +112,7 @@ class CapstoneProjectTestCase(unittest.TestCase):
 
     def test_post_actors(self):
         actors={    "name": "Ahmed Ezz", "age": "50","gender": "male"}
-        response = self.client().post('/actors', json=actors)
+        response = self.client().post('/actors', json=actors, headers={'Authorization': self.authorization["director"]})
         data = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'],True)
@@ -110,7 +121,7 @@ class CapstoneProjectTestCase(unittest.TestCase):
     def test_post_actors_422(self):
 
         actors={ "n": "Ahmed Ezz", "a": "50","g": "male"}
-        response = self.client().post('/actors', json=actors)
+        response = self.client().post('/actors', json=actors, headers={'Authorization': self.authorization["director"]})
         data = json.loads(response.data)
         self.assertEqual(response.status_code, 422)
         self.assertEqual(data['success'],False)
@@ -118,7 +129,7 @@ class CapstoneProjectTestCase(unittest.TestCase):
 
     def test_patch_movies(self):
         movie={    "title": "Tito","release_date": "06/23/2004"}
-        response = self.client().patch('/movies/3', json=movie)
+        response = self.client().patch('/movies/3', json=movie, headers={'Authorization': self.authorization["director"]})
         data = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'],True)
@@ -127,7 +138,7 @@ class CapstoneProjectTestCase(unittest.TestCase):
     def test_patch_movies_422(self):
 
         movie={ "title": "Tito","release_date": 10 }
-        response = self.client().patch('/movies/3', json=movie)
+        response = self.client().patch('/movies/3', json=movie, headers={'Authorization': self.authorization["director"]})
         data = json.loads(response.data)
         self.assertEqual(response.status_code, 422)
         self.assertEqual(data['success'],False)
@@ -135,7 +146,7 @@ class CapstoneProjectTestCase(unittest.TestCase):
 
     def test_patch_actors(self):
         actor={    "name": "Ahmed Elsakka", "age": 48 }
-        response = self.client().patch('/actors/3', json=actor)
+        response = self.client().patch('/actors/3', json=actor, headers={'Authorization': self.authorization["director"]})
         data = json.loads(response.data)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(data['success'],True)
@@ -144,7 +155,7 @@ class CapstoneProjectTestCase(unittest.TestCase):
     def test_patch_actors_422(self):
 
         actor={ "movies_id": 1000 }
-        response = self.client().patch('/actors/3', json=actor)
+        response = self.client().patch('/actors/3', json=actor, headers={'Authorization': self.authorization["director"]})
         data = json.loads(response.data)
         self.assertEqual(response.status_code, 422)
         self.assertEqual(data['success'],False)
@@ -152,12 +163,12 @@ class CapstoneProjectTestCase(unittest.TestCase):
 
     def test_delete_movies(self):
 
-        response = self.client().delete('/movies/1')
+        response = self.client().delete('/movies/1', headers={'Authorization': self.authorization["producer"]})
         data=json.loads(response.data)
         self.assertEqual(response.status_code,200)
         self.assertEqual(data['success'],True)
         #self.assertTrue(data['id'])
-
+"""
     def test_delete_movies_404(self):
 
         response = self.client().delete('/movies/')
@@ -186,7 +197,7 @@ class CapstoneProjectTestCase(unittest.TestCase):
         self.assertEqual(data['message'],'Unprocessable')
      
 
-    
+    """
 
 
 
